@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: user
+      POSTGRES_USER: user
+      POSTGRES_DB: pizzeria
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '5430:5432'
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - '6379:6379'
+    expose:
+      - 6379
+    restart: always
+  node:
+    container_name: node
+    restart: always
+    build: .
+    volumes:
+      - .:/usr/app
+    ports:
+      - '3000:3000'
+    links:
+      - db
+      - redis
+    depends_on:
+      - db
+      - redis
